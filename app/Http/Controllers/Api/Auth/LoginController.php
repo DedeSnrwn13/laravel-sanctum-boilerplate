@@ -11,7 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->only('logout');
+    }
+
+    public function login(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -38,7 +43,29 @@ class LoginController extends Controller
                     'user' => $user,
                     'access_token' => $user->createToken($request->email)->plainTextToken
                 ],
-                'message' => 'Your has logged',
+                'message' => 'Token has been crated.',
+            ], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            // Revoke all tokens ...
+            // $user->tokens()->delete();
+
+            // Revoke the token that was used to authenticate the current request ...
+            $request->user()->currentAccessToken()->delete();
+
+            // Revoke a specific token ...
+            // $request->tokens()->where('id', $tokenId)->delete();
+
+            return response()->json([
+                'message' => 'All token has been revoked from this user.',
             ], Response::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
