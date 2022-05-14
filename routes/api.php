@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,4 +26,6 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', RegisterController::class);
     Route::post('/login', [LoginController::class, 'login']);
     Route::post('/logout', [LoginController::class, 'logout']);
+    Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetPasswordLink']);
+    Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('password.reset');
 });
